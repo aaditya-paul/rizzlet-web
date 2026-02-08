@@ -21,6 +21,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [ocrLoading, setOcrLoading] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -31,31 +34,75 @@ export default function DashboardPage() {
     }
   }, [router]);
 
-  const parseConversation = (text: string) => {
-    const lines = text.split("\n").filter((line) => line.trim());
-    const messages = [];
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
-    for (const line of lines) {
-      if (
-        line.toLowerCase().startsWith("them:") ||
-        line.toLowerCase().startsWith("other:")
-      ) {
-        messages.push({
-          sender: "other" as const,
-          text: line.substring(line.indexOf(":") + 1).trim(),
-        });
-      } else if (
-        line.toLowerCase().startsWith("you:") ||
-        line.toLowerCase().startsWith("me:")
-      ) {
-        messages.push({
-          sender: "user" as const,
-          text: line.substring(line.indexOf(":") + 1).trim(),
-        });
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith("image/")) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          setImageFile(file);
+          const reader = new FileReader();
+          reader.onload = (e) => setImagePreview(e.target?.result as string);
+          reader.readAsDataURL(file);
+        }
+        break;
       }
     }
+  };
 
-    return messages;
+  const handleProcessImage = async () => {
+    if (!imageFile) return;
+
+    setOcrLoading(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const response = await fetch("http://localhost:5000/api/ocr/extract", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to process image");
+      }
+
+      // Set extracted text to conversation textarea
+      setConversation(data.text);
+
+      // Clear image
+      setImageFile(null);
+      setImagePreview(null);
+    } catch (err: any) {
+      setError(err.message || "Failed to extract text from image");
+    } finally {
+      setOcrLoading(false);
+    }
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleGenerate = async () => {
@@ -69,8 +116,7 @@ export default function DashboardPage() {
     setReplies([]);
 
     try {
-      const messages = parseConversation(conversation);
-
+      // Send raw conversation text - let AI parse it
       const response = await fetch(
         "http://localhost:5000/api/replies/generate",
         {
@@ -80,7 +126,7 @@ export default function DashboardPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            conversation: { messages },
+            conversationText: conversation, // Send raw text
             tone: selectedTone,
             count: 3,
           }),
@@ -144,10 +190,56 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Left: Input */}
           <div className="space-y-4">
+            {/* Image Upload Section */}
+            {imagePreview ? (
+              <div className="card relative">
+                <img
+                  src={imagePreview}
+                  alt="Screenshot preview"
+                  className="w-full rounded-lg"
+                />
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={handleProcessImage}
+                    disabled={ocrLoading}
+                    className="btn-primary flex-1"
+                  >
+                    {ocrLoading ? "extracting text..." : "✨ extract text"}
+                  </button>
+                  <button onClick={clearImage} className="btn-secondary">
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="card border-dashed border-2 border-[var(--border)] text-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="cursor-pointer block py-4"
+                >
+                  <div className="text-3xl mb-2">📸</div>
+                  <p className="text-sm text-gray-400">
+                    click to upload or paste a screenshot
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    (Ctrl+V or Cmd+V to paste)
+                  </p>
+                </label>
+              </div>
+            )}
+
             <textarea
               value={conversation}
               onChange={(e) => setConversation(e.target.value)}
-              placeholder={MICROCOPY.app.chatPlaceholder}
+              onPaste={handlePaste}
+              placeholder="Paste your chat here (WhatsApp, Discord, etc.) - AI will automatically parse it!"
               className="input-field min-h-[300px] resize-none font-mono text-sm"
             />
 

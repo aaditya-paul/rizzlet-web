@@ -26,9 +26,9 @@ export const MICROCOPY = {
   // Main app
   app: {
     title: "what do you need help with?",
-    subtitle: "paste your chat and pick a vibe",
+    subtitle: "paste your chat, upload a screenshot, or type it out",
     chatPlaceholder:
-      "paste your conversation here...\n\nThem: hey what's up?\nYou: not much, wbu?",
+      "paste your conversation here...\n\nThem: hey! how's your weekend going?\nYou: pretty good, just chilling",
     selectTone: "pick your vibe",
     generateButton: "help me reply",
     generating: "cooking up some replies...",
@@ -36,6 +36,8 @@ export const MICROCOPY = {
     copyButton: "copy",
     copied: "copied!",
     emptyState: "paste in a convo to get started",
+    imageUpload: "upload screenshot",
+    extractingText: "extracting text from image...",
   },
 
   // Tone descriptions
