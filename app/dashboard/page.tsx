@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { MICROCOPY } from "@/lib/microcopy";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 
 type ToneMode = "safe" | "playful" | "flirty" | "bold";
 
@@ -88,9 +90,7 @@ export default function DashboardPage() {
         throw new Error(data.error || "Failed to process image");
       }
 
-      // Vision AI returns structured conversation
       if (data.conversation && data.conversation.messages) {
-        // Format messages as text for the textarea
         const formattedText = data.conversation.messages
           .map((msg: any) => {
             const speaker = msg.sender === "user" ? "You" : "Them";
@@ -99,12 +99,9 @@ export default function DashboardPage() {
           .join("\n");
 
         setConversation(formattedText);
-
-        // Auto-set checkbox based on who sent last message
         setLastMessageWasUser(data.lastMessageWasUser || false);
       }
 
-      // Clear image
       setImageFile(null);
       setImagePreview(null);
     } catch (err: any) {
@@ -130,7 +127,6 @@ export default function DashboardPage() {
     setReplies([]);
 
     try {
-      // Send raw conversation text - let AI parse it
       const response = await fetch(
         "http://localhost:5000/api/replies/generate",
         {
@@ -140,8 +136,8 @@ export default function DashboardPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            conversationText: conversation, // Send raw text
-            lastMessageWasUser: lastMessageWasUser, // Conversation perspective
+            conversationText: conversation,
+            lastMessageWasUser: lastMessageWasUser,
             tone: selectedTone,
             count: 3,
           }),
@@ -179,265 +175,221 @@ export default function DashboardPage() {
   if (!token) return null;
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-[var(--border)] bg-[#050511]/80 backdrop-blur-md sticky top-0 z-10 supports-[backdrop-filter]:bg-opacity-60">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="text-2xl font-extrabold text-gradient tracking-tight">
+    <div className="min-h-screen p-4 md:p-8">
+      {/* Navbar / Header */}
+      <header className="flex justify-between items-center mb-10 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <div className="text-3xl font-black text-gradient tracking-tighter">
             rizzlet
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-sm font-medium text-gray-400 hover:text-white transition opacity-70 hover:opacity-100"
-          >
-            log out
-          </button>
+          <span className="bg-white/10 text-xs px-2 py-1 rounded-full text-gray-300 font-mono">
+            BETA
+          </span>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="text-sm font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-wider"
+        >
+          Log out
+        </button>
       </header>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter text-white drop-shadow-lg">
-            {MICROCOPY.app.title}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-400 font-medium max-w-2xl mx-auto">
-            {MICROCOPY.app.subtitle}
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Input & Controls (lg:col-span-4) */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Tone Selector Widget */}
+          <Card className="hover:border-pink-500/30 transition-colors">
+            <h3 className="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">
+              Vibe Check
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(MICROCOPY.tones) as ToneMode[]).map((tone) => {
+                const toneData = MICROCOPY.tones[tone];
+                const isSelected = selectedTone === tone;
+                return (
+                  <button
+                    key={tone}
+                    onClick={() => setSelectedTone(tone)}
+                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 border ${
+                      isSelected
+                        ? "bg-[var(--color-primary)] border-[var(--color-primary)] text-white shadow-lg shadow-purple-500/30 scale-105"
+                        : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {toneData.emoji} {toneData.label}
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Left: Input */}
-          <div className="space-y-4">
-            {/* Image Upload Section */}
+          {/* Image Upload Widget */}
+          <Card
+            className={`relative group overflow-hidden border-dashed ${!imagePreview ? "border-2 border-white/20" : ""}`}
+          >
             {imagePreview ? (
-              <div className="card relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="relative">
                 <img
                   src={imagePreview}
-                  alt="Screenshot preview"
-                  className="w-full rounded-xl"
+                  alt="Upload preview"
+                  className="w-full h-64 object-cover rounded-xl opacity-80 group-hover:opacity-100 transition-opacity"
                 />
-                <div className="flex gap-2 mt-4 relative z-10">
-                  <button
+                <div className="absolute bottom-2 right-2 flex gap-2">
+                  <Button
+                    size="sm"
                     onClick={handleProcessImage}
-                    disabled={ocrLoading}
-                    className="btn-primary flex-1 text-sm py-2"
+                    isLoading={ocrLoading}
                   >
-                    {ocrLoading ? "reading receipts... 🧐" : "✨ scan da chat"}
-                  </button>
+                    ✨ Scan
+                  </Button>
                   <button
                     onClick={clearImage}
-                    className="btn-secondary py-2 px-3 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-400"
+                    className="bg-black/50 p-2 rounded-full text-white hover:bg-red-500/80 transition-colors"
                   >
                     ✕
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="card border-dashed border-2 border-white/10 hover:border-violet-500/50 hover:bg-white/5 transition-all duration-300 text-center group">
+              <label className="block w-full h-40 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors rounded-xl">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageSelect}
                   className="hidden"
-                  id="image-upload"
                 />
-                <label
-                  htmlFor="image-upload"
-                  className="cursor-pointer block py-8"
-                >
-                  <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
-                    📸
-                  </div>
-                  <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
-                    {MICROCOPY.app.imageUpload}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    (Ctrl+V to paste)
-                  </p>
-                </label>
-              </div>
+                <div className="text-4xl mb-2">📸</div>
+                <span className="font-bold text-gray-400">
+                  Upload Screenshot
+                </span>
+                <span className="text-xs text-gray-600 mt-1">
+                  or paste (Ctrl+V)
+                </span>
+              </label>
             )}
+          </Card>
 
+          {/* Conversation Input */}
+          <Card>
+            <h3 className="text-sm font-bold text-gray-400 mb-2 uppercase tracking-wider">
+              The Tea ☕
+            </h3>
             <textarea
               value={conversation}
               onChange={(e) => setConversation(e.target.value)}
               onPaste={handlePaste}
-              placeholder={MICROCOPY.app.chatPlaceholder}
-              className="input-field min-h-[300px] resize-none font-mono text-sm leading-relaxed"
+              placeholder="Paste conversation or type here..."
+              className="w-full bg-black/20 rounded-xl p-4 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] min-h-[150px] resize-none mb-4"
             />
 
-            {/* Last Message Context */}
-            <div className="flex items-center gap-4 p-4 card rounded-2xl border-white/5 bg-white/5">
-              <div className="relative flex items-center">
-                <input
-                  type="checkbox"
-                  id="lastMessageCheck"
-                  checked={lastMessageWasUser}
-                  onChange={(e) => setLastMessageWasUser(e.target.checked)}
-                  className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-white/20 transition-all checked:border-violet-500 checked:bg-violet-500 hover:border-violet-400"
-                />
-                <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <input
+                type="checkbox"
+                id="lastMsg"
+                checked={lastMessageWasUser}
+                onChange={(e) => setLastMessageWasUser(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-600 text-[var(--color-primary)] focus:ring-[var(--color-primary)] bg-transparent"
+              />
               <label
-                htmlFor="lastMessageCheck"
-                className="cursor-pointer select-none flex-1"
+                htmlFor="lastMsg"
+                className="text-sm font-medium text-gray-300 cursor-pointer select-none"
               >
-                <div className="font-bold text-sm text-gray-200">
-                  I sent the last message
-                </div>
-                <div className="text-xs text-gray-400 mt-1 font-medium">
-                  {lastMessageWasUser
-                    ? "✨ Generating follow-up messages to continue the vibe"
-                    : "↩️ Generating replies to respond to them"}
-                </div>
+                I sent the last message
               </label>
             </div>
 
-            {/* Tone Selector */}
-            <div>
-              <label className="block text-sm font-bold text-gray-300 mb-3 ml-1 uppercase tracking-wider text-xs">
-                {MICROCOPY.app.selectTone}
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {(Object.keys(MICROCOPY.tones) as ToneMode[]).map((tone) => {
-                  const toneData = MICROCOPY.tones[tone];
-                  const isSelected = selectedTone === tone;
-                  return (
-                    <button
-                      key={tone}
-                      onClick={() => setSelectedTone(tone)}
-                      className={`tone-btn group relative overflow-hidden ${isSelected ? "active ring-2 ring-violet-500/50" : "opacity-80 hover:opacity-100"}`}
-                    >
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-r from-violet-500/10 to-pink-500/10 opacity-0 transition-opacity duration-300 ${isSelected ? "opacity-100" : "group-hover:opacity-100"}`}
-                      />
-                      <span className="text-2xl filter drop-shadow-md transform group-hover:scale-110 transition-transform duration-300">
-                        {toneData.emoji}
-                      </span>
-                      <div className="text-left flex-1 relative z-10">
-                        <div
-                          className={`font-bold text-sm ${isSelected ? "text-white" : "text-gray-300"}`}
-                        >
-                          {toneData.label}
-                        </div>
-                        <div className="text-[10px] text-gray-500 font-medium tracking-tight">
-                          {toneData.description}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <button
+            <Button
               onClick={handleGenerate}
-              disabled={loading}
-              className={`btn-primary w-full text-lg shadow-lg shadow-violet-500/20 ${loading ? "animate-pulse" : "hover:shadow-pink-500/30"}`}
+              isLoading={loading}
+              className="w-full shadow-xl shadow-purple-600/20"
+              disabled={!conversation.trim()}
             >
-              {loading
-                ? MICROCOPY.app.generating
-                : MICROCOPY.app.generateButton}
-            </button>
+              {MICROCOPY.app.generateButton}
+            </Button>
 
             {error && (
-              <div className="text-[var(--error)] text-sm text-center p-3 bg-red-500 bg-opacity-10 rounded-lg">
+              <p className="text-red-400 text-xs mt-3 text-center animate-pulse">
                 {error}
+              </p>
+            )}
+          </Card>
+        </div>
+
+        {/* Right Column: Results (lg:col-span-8) */}
+        <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Promo Banner / Placeholder */}
+            {replies.length === 0 && !loading && (
+              <div className="md:col-span-2 min-h-[400px] flex items-center justify-center">
+                <div className="text-center opacity-50">
+                  <div className="text-6xl mb-4 grayscale">👻</div>
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Ghost Town?
+                  </h2>
+                  <p className="max-w-md mx-auto text-gray-400">
+                    Upload a screenshot or paste a chat to get some rizz. Don't
+                    be shy.
+                  </p>
+                </div>
               </div>
             )}
-          </div>
 
-          {/* Right: Replies */}
-          <div className="space-y-4">
-            <label className="block text-sm font-bold text-gray-300 mb-2 ml-1 uppercase tracking-wider text-xs">
-              the sauce 🥫
-            </label>
-            <div className="space-y-4">
-              {replies.length === 0 && !loading && (
-                <div className="card text-center text-gray-500 py-20 border-dashed border-2 border-white/5 bg-white/5 mx-auto flex flex-col items-center justify-center">
-                  <div className="text-4xl mb-4 opacity-50 grayscale">🍽️</div>
-                  <p className="text-lg font-medium text-gray-400">
-                    {MICROCOPY.app.emptyState}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    I'm starving here, fam.
-                  </p>
-                </div>
-              )}
+            {loading && (
+              <div className="md:col-span-2 flex flex-col items-center justify-center min-h-[400px]">
+                <div className="w-16 h-16 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mb-6" />
+                <p className="text-lg font-bold animate-pulse text-[var(--color-secondary)]">
+                  Cooking up replies... 🍳
+                </p>
+              </div>
+            )}
 
-              {loading && (
-                <div className="card text-center py-20 animate-pulse-glow border-violet-500/30">
-                  <div className="text-5xl mb-4 animate-bounce">👨‍🍳</div>
-                  <p className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-500 font-bold text-xl">
-                    {MICROCOPY.app.generating}
-                  </p>
-                </div>
-              )}
-
-              {replies.map((reply, index) => (
-                <div
-                  key={index}
-                  className="card group hover:border-pink-500/40 hover:bg-white/10 transition-all duration-300 relative overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-white/20 bg-white/5 px-2 py-1 rounded-full">
-                      {reply.tone}
-                    </span>
-                  </div>
-                  <p className="text-lg leading-relaxed mb-4 text-gray-100 font-medium">
-                    {reply.text}
-                  </p>
-                  <div className="flex justify-between items-center mt-2 border-t border-white/5 pt-3">
-                    <div className="flex gap-1">
-                      {Array.from({
-                        length: Math.min(
-                          5,
-                          Math.ceil((reply.confidence || 0.8) * 5),
-                        ),
-                      }).map((_, i) => (
-                        <span key={i} className="text-xs">
-                          🔥
-                        </span>
-                      ))}
+            {/* Reply Cards */}
+            {replies.map((reply, index) => (
+              <div key={index} className="md:col-span-1 group">
+                <Card className="h-full flex flex-col justify-between hover:border-[var(--color-secondary)] hover:shadow-2xl hover:shadow-lime-500/10 transition-all duration-500">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="text-xs font-black uppercase tracking-widest text-[var(--color-primary)] bg-white/5 px-2 py-1 rounded">
+                        {reply.tone}
+                      </span>
+                      <div className="flex text-xs gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <span
+                            key={i}
+                            className={
+                              i < reply.confidence * 5
+                                ? "text-[var(--color-secondary)]"
+                                : "text-gray-700"
+                            }
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <button
-                      onClick={() => handleCopy(reply.text, index)}
-                      className="text-xs bg-white/10 hover:bg-violet-500 hover:text-white text-gray-300 px-3 py-1.5 rounded-full font-bold transition-all transform active:scale-95 flex items-center gap-2"
-                    >
-                      {copiedIndex === index ? (
-                        <>✅ {MICROCOPY.app.copied}</>
-                      ) : (
-                        <>📋 {MICROCOPY.app.copyButton}</>
-                      )}
-                    </button>
+                    <p className="text-lg font-medium text-white leading-relaxed">
+                      "{reply.text}"
+                    </p>
                   </div>
-                </div>
-              ))}
 
-              {replies.length > 0 && !loading && (
-                <button
-                  onClick={handleGenerate}
-                  className="btn-secondary w-full hover:bg-white/5 hover:text-pink-400 hover:border-pink-500/50 transition-all py-3 font-bold tracking-wide"
-                >
-                  {MICROCOPY.app.regenerate}
-                </button>
-              )}
-            </div>
+                  <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleCopy(reply.text, index)}
+                      className={
+                        copiedIndex === index
+                          ? "bg-green-500/20 text-green-400 border-green-500/50"
+                          : ""
+                      }
+                    >
+                      {copiedIndex === index ? "Copied!" : "Copy"}
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            ))}
           </div>
         </div>
       </div>

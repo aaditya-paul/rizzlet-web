@@ -4,6 +4,9 @@ import { useState } from "react";
 import { MICROCOPY } from "@/lib/microcopy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -43,74 +46,80 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <Link
-          href="/"
-          className="text-2xl font-bold text-gradient block text-center mb-8"
-        >
-          rizzlet
-        </Link>
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#0a0a0f]">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-20%] right-[20%] w-[600px] h-[600px] bg-pink-900/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[120px]" />
+      </div>
 
-        <div className="card">
-          <h1 className="text-2xl font-bold mb-6">
-            {MICROCOPY.auth.signupTitle}
-          </h1>
+      <div className="w-full max-w-md z-10">
+        <div className="text-center mb-10">
+          <Link
+            href="/"
+            className="text-4xl font-black text-white tracking-tighter inline-block mb-3"
+          >
+            rizzlet
+          </Link>
+          <p className="text-gray-400 font-medium text-sm tracking-wide uppercase">
+            Join the Vibe 🚀
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {MICROCOPY.auth.emailLabel}
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
-                placeholder={MICROCOPY.auth.emailPlaceholder}
-                required
-              />
+        <Card className="border-t border-white/10 shadow-2xl shadow-black/50">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
+              <span className="text-xl">👋</span>
             </div>
+            <h1 className="text-2xl font-bold text-white">
+              {MICROCOPY.auth.signupTitle}
+            </h1>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {MICROCOPY.auth.passwordLabel}
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field"
-                placeholder={MICROCOPY.auth.passwordPlaceholder}
-                required
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Input
+              label={MICROCOPY.auth.emailLabel}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={MICROCOPY.auth.emailPlaceholder}
+              required
+            />
+
+            <Input
+              label={MICROCOPY.auth.passwordLabel}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={MICROCOPY.auth.passwordPlaceholder}
+              required
+            />
 
             {error && (
-              <div className="text-[var(--error)] text-sm text-center p-3 bg-red-500 bg-opacity-10 rounded-lg">
+              <div className="text-[var(--color-error)] text-sm text-center p-3 bg-red-500/10 border border-red-500/20 rounded-xl font-medium animate-pulse">
                 {error}
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="btn-primary w-full"
+              isLoading={loading}
+              className="w-full text-lg shadow-xl shadow-purple-500/30"
             >
-              {loading ? "..." : MICROCOPY.auth.signupButton}
-            </button>
+              {MICROCOPY.auth.signupButton}
+            </Button>
           </form>
 
-          <p className="text-center text-gray-400 text-sm mt-6">
+          <p className="text-center text-gray-400 text-sm mt-8 font-medium">
             {MICROCOPY.auth.switchToLogin}{" "}
             <Link
               href="/login"
-              className="text-[var(--primary)] hover:underline"
+              className="text-[var(--color-accent-pink)] hover:text-white hover:underline transition-colors font-bold"
             >
               {MICROCOPY.auth.loginLink}
             </Link>
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

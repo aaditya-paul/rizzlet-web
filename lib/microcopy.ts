@@ -41,22 +41,22 @@ export const MICROCOPY = {
   // Tone descriptions
   tones: {
     safe: {
-      label: "wholesome",
+      label: "wholesome / friendly",
       emoji: "🌱",
       description: "friendly, low stakes, safe bet",
     },
     playful: {
-      label: "playful",
+      label: "playful / witty",
       emoji: "✨",
       description: "fun, teasing, immaculate vibes",
     },
     flirty: {
-      label: "rizz god",
+      label: "rizz god / flirty",
       emoji: "😏",
       description: "smooth, charming, shoot your shot",
     },
     bold: {
-      label: "unhinged",
+      label: "unhinged / bold",
       emoji: "🔥",
       description: "high risk, high reward",
     },
