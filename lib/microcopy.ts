@@ -1,90 +1,88 @@
 export const MICROCOPY = {
   // Landing page
   hero: {
-    title: "never leave them on read again",
-    subtitle:
-      "ai that actually gets your vibe and helps you reply like a real person",
-    cta: "get started for free",
+    title: "never leave 'em on read again",
+    subtitle: "your AI wingman that passes the vibe check every time",
+    cta: "unlock your rizz",
   },
 
   // Auth
   auth: {
-    signupTitle: "let's get you set up",
-    loginTitle: "welcome back!",
-    emailLabel: "your email",
+    signupTitle: "join the squad",
+    loginTitle: "welcome back bestie!",
+    emailLabel: "drop your email",
     emailPlaceholder: "you@example.com",
-    passwordLabel: "password",
-    passwordPlaceholder: "make it good",
-    signupButton: "let's go",
-    loginButton: "sign me in",
-    switchToLogin: "already have an account?",
-    switchToSignup: "new here?",
-    loginLink: "log in",
-    signupLink: "sign up",
+    passwordLabel: "secret code",
+    passwordPlaceholder: "keep it safe",
+    signupButton: "let's go 🚀",
+    loginButton: "log me in",
+    switchToLogin: "already familiar?",
+    switchToSignup: "new vibe?",
+    loginLink: "hop in",
+    signupLink: "join up",
   },
 
   // Main app
   app: {
-    title: "what do you need help with?",
-    subtitle: "paste your chat, upload a screenshot, or type it out",
-    chatPlaceholder:
-      "paste your conversation here...\n\nThem: hey! how's your weekend going?\nYou: pretty good, just chilling",
-    selectTone: "pick your vibe",
-    generateButton: "help me reply",
-    generating: "cooking up some replies...",
-    regenerate: "try again",
-    copyButton: "copy",
-    copied: "copied!",
-    emptyState: "paste in a convo to get started",
-    imageUpload: "upload screenshot",
-    extractingText: "extracting text from image...",
+    title: "rizzlet",
+    subtitle: "ai textual chemistry consultant",
+    chatPlaceholder: "paste the chat here...\n\nThem: u up?\nYou: ...",
+    selectTone: "vibe check ✨",
+    generateButton: "let him cook 🍳",
+    generating: "cooking up some gas... 🔥",
+    regenerate: "reroll that 🎲",
+    copyButton: "yoink",
+    copied: "no cap 🧢",
+    emptyState: "dry dry text area... paste something!",
+    imageUpload: "scan da chat 📸",
+    extractingText: "reading receipts... 🧐",
   },
 
   // Tone descriptions
   tones: {
     safe: {
-      label: "safe",
+      label: "wholesome",
       emoji: "🌱",
-      description: "friendly & respectful",
+      description: "friendly, low stakes, safe bet",
     },
     playful: {
       label: "playful",
       emoji: "✨",
-      description: "fun & lighthearted",
+      description: "fun, teasing, immaculate vibes",
     },
     flirty: {
-      label: "flirty",
+      label: "rizz god",
       emoji: "😏",
-      description: "confident & charming",
+      description: "smooth, charming, shoot your shot",
     },
     bold: {
-      label: "bold",
+      label: "unhinged",
       emoji: "🔥",
-      description: "direct & assertive",
+      description: "high risk, high reward",
     },
   },
 
   // Usage stats
   usage: {
-    title: "your usage",
-    dailyLabel: "today",
-    monthlyLabel: "this month",
+    title: "stats",
+    dailyLabel: "today's rizz",
+    monthlyLabel: "monthly vibes",
     limitLabel: "limit",
     remaining: (count: number) => `${count} left`,
   },
 
   // Errors
   errors: {
-    generic: "oops, something went wrong",
-    network: "can't reach the server rn",
-    authFailed: "hmm, those credentials don't look right",
-    quotaExceeded: "you've hit your daily limit. come back tomorrow!",
-    emptyConversation: "paste in some messages first",
+    generic: "big yikes, something broke",
+    network: "wifi acting sus",
+    authFailed: "ain't lookin right chief",
+    quotaExceeded: "you cooked too hard today. chill till tmrw.",
+    emptyConversation: "feed me some text first!",
   },
 
   // Success messages
   success: {
-    accountCreated: "you're in! ✨",
-    loggedIn: "welcome back!",
+    accountCreated: "welcome to the club ✨",
+    loggedIn: "we back!",
   },
 } as const;
