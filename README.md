@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rizzlet Web
 
-## Getting Started
+Minimal Gen Z-style frontend for Rizzlet AI texting copilot.
 
-First, run the development server:
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📝 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✨ Minimal, quirky UI with Gen Z vibes
+- 💬 Paste conversations and get instant replies
+- 🎨 4 tone modes: safe, playful, flirty, bold
+- 📋 One-tap copy functionality
+- 🌙 Dark theme with purple/pink gradients
+- 📱 Mobile-responsive design
 
-## Learn More
+## 🏗️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js 14 (App Router)
+- TypeScript
+- TailwindCSS
+- React Hooks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/
+├── page.tsx          # Landing page
+├── login/            # Login page
+├── signup/           # Signup page
+├── dashboard/        # Main app (reply generation)
+├── layout.tsx        # Root layout
+└── globals.css       # Global styles
 
-## Deploy on Vercel
+lib/
+└── microcopy.ts      # All UI text (Gen Z style)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎨 Design Philosophy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Casual, not corporate** - Gen Z microcopy, no tech jargon
+- **Minimal & focused** - Only what you need, nothing extra
+- **Dark & vibrant** - Purple/pink gradients, smooth interactions
+- **Quirky but simple** - Fun without being overwhelming
+
+## 🔗 Backend Connection
+
+Make sure the backend is running on `http://localhost:5000`
+
+## 📱 Pages
+
+- `/` - Landing page
+- `/signup` - Create account
+- `/login` - Sign in
+- `/dashboard` - Main app (generate replies)
+
+## 🎯 Usage
+
+1. Sign up or log in
+2. Paste your chat conversation
+3. Pick a vibe (tone mode)
+4. Get 3 ready-to-send replies
+5. Tap to copy and send
+
+---
+
+Built for people who know what they feel but not what to type 💬✨
