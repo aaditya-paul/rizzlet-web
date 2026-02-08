@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [ocrLoading, setOcrLoading] = useState(false);
+  const [lastMessageWasUser, setLastMessageWasUser] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -87,8 +88,21 @@ export default function DashboardPage() {
         throw new Error(data.error || "Failed to process image");
       }
 
-      // Set extracted text to conversation textarea
-      setConversation(data.text);
+      // Vision AI returns structured conversation
+      if (data.conversation && data.conversation.messages) {
+        // Format messages as text for the textarea
+        const formattedText = data.conversation.messages
+          .map((msg: any) => {
+            const speaker = msg.sender === "user" ? "You" : "Them";
+            return `${speaker}: ${msg.text}`;
+          })
+          .join("\n");
+
+        setConversation(formattedText);
+
+        // Auto-set checkbox based on who sent last message
+        setLastMessageWasUser(data.lastMessageWasUser || false);
+      }
 
       // Clear image
       setImageFile(null);
@@ -127,6 +141,7 @@ export default function DashboardPage() {
           },
           body: JSON.stringify({
             conversationText: conversation, // Send raw text
+            lastMessageWasUser: lastMessageWasUser, // Conversation perspective
             tone: selectedTone,
             count: 3,
           }),
@@ -242,6 +257,28 @@ export default function DashboardPage() {
               placeholder="Paste your chat here (WhatsApp, Discord, etc.) - AI will automatically parse it!"
               className="input-field min-h-[300px] resize-none font-mono text-sm"
             />
+
+            {/* Last Message Context */}
+            <div className="flex items-center gap-3 p-4 bg-[var(--card)] rounded-lg border border-[var(--border)]">
+              <input
+                type="checkbox"
+                id="lastMessageCheck"
+                checked={lastMessageWasUser}
+                onChange={(e) => setLastMessageWasUser(e.target.checked)}
+                className="w-4 h-4 accent-[var(--primary)] cursor-pointer"
+              />
+              <label
+                htmlFor="lastMessageCheck"
+                className="text-sm cursor-pointer select-none"
+              >
+                <div className="font-medium">I sent the last message</div>
+                <div className="text-xs text-gray-400 mt-0.5">
+                  {lastMessageWasUser
+                    ? "💬 Generating follow-up messages to continue your conversation"
+                    : "💬 Generating replies to respond to them"}
+                </div>
+              </label>
+            </div>
 
             {/* Tone Selector */}
             <div>
