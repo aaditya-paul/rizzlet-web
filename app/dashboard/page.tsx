@@ -236,11 +236,12 @@ export default function DashboardPage() {
                   alt="Upload preview"
                   className="w-full h-64 object-cover rounded-xl opacity-80 group-hover:opacity-100 transition-opacity"
                 />
-                <div className="absolute bottom-2 right-2 flex gap-2">
+                <div className="absolute  bottom-2 right-2 flex gap-2">
                   <Button
                     size="sm"
                     onClick={handleProcessImage}
                     isLoading={ocrLoading}
+                    className=" backdrop-blur-[128px] border-2"
                   >
                     ✨ Scan
                   </Button>
@@ -253,21 +254,41 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
-              <label className="block w-full h-40 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors rounded-xl">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                />
-                <div className="text-4xl mb-2">📸</div>
-                <span className="font-bold text-gray-400">
-                  Upload Screenshot
-                </span>
-                <span className="text-xs text-gray-600 mt-1">
-                  or paste (Ctrl+V)
-                </span>
-              </label>
+              <div className="space-y-3">
+                <label className="block w-full h-32 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors rounded-xl border-2 border-dashed border-white/20">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <div className="text-4xl mb-2">📸</div>
+                  <span className="font-bold text-gray-400">
+                    Upload Screenshot
+                  </span>
+                  <span className="text-xs text-gray-600 mt-1">
+                    Click to browse files
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Or click here and paste (Ctrl+V)"
+                    onPaste={handlePaste}
+                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:bg-black/40 focus:ring-1 focus:ring-[var(--color-primary)]/50 transition-all duration-200 text-center text-sm"
+                    readOnly
+                    onFocus={(e) => {
+                      e.target.placeholder = "Paste your image now (Ctrl+V)";
+                      e.target.classList.add("animate-pulse");
+                    }}
+                    onBlur={(e) => {
+                      e.target.placeholder = "Or click here and paste (Ctrl+V)";
+                      e.target.classList.remove("animate-pulse");
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </Card>
 
