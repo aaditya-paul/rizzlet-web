@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MICROCOPY } from "@/lib/microcopy";
+import { siteConfig } from "@/lib/siteConfig";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -21,7 +22,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${siteConfig.apiUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MICROCOPY } from "@/lib/microcopy";
+import { siteConfig } from "@/lib/siteConfig";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -76,7 +77,7 @@ export default function DashboardPage() {
       const formData = new FormData();
       formData.append("image", imageFile);
 
-      const response = await fetch("http://localhost:5000/api/ocr/extract", {
+      const response = await fetch(`${siteConfig.apiUrl}/api/ocr/extract`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,7 +129,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/replies/generate",
+        `${siteConfig.apiUrl}/api/replies/generate`,
         {
           method: "POST",
           headers: {
