@@ -97,6 +97,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.03em;
 }
+/* Buttons */
 .btn-primary {
   background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   color: white;
@@ -108,6 +109,39 @@ body {
   box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
   letter-spacing: 0.02em;
 }
+
+.btn-primary:hover {
+  transform: scale(1.02) translateY(-1px);
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 .glow-border {
   position: relative;
 }
