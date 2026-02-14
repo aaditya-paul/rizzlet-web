@@ -6,12 +6,6 @@ export const MICROCOPY = {
     cta: "unlock your rizz",
   },
 
-  // Video section
-  video: {
-    heading: "see it in action ⚡",
-    subtitle: "watch how easy it is to level up your game",
-  },
-
   // Auth
   auth: {
     signupTitle: "join the squad",
