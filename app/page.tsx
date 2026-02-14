@@ -30,7 +30,10 @@ export default function HomePage() {
             <span className="text-3xl">😈</span>
             <span className="text-gradient">rizzlet</span>
           </div>
-          <Link href="/auth" className="btn-secondary text-sm backdrop-blur-md">
+          <Link
+            href="/login"
+            className="btn-secondary text-sm backdrop-blur-md"
+          >
             {MICROCOPY.auth.loginLink}
           </Link>
         </div>
@@ -56,7 +59,10 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center pt-4">
-            <Link href="/auth" className="btn-primary text-xl px-10 py-5 group">
+            <Link
+              href="/signup"
+              className="btn-primary text-xl px-10 py-5 group"
+            >
               {MICROCOPY.hero.cta}
               <span className="inline-block transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 ml-2">
                 🚀
