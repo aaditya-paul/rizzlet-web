@@ -15,10 +15,10 @@ export const MICROCOPY = {
   // Auth
   auth: {
     signupTitle: "join the squad",
-    loginTitle: "welcome back bestie!",
+    loginTitle: "welcome bestie!",
     emailLabel: "drop your email",
     emailPlaceholder: "you@example.com",
-    passwordLabel: "secret code",
+    passwordLabel: "pass code",
     passwordPlaceholder: "keep it safe",
     signupButton: "let's go 🚀",
     loginButton: "log me in",
